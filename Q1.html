@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- Loading d3.js -->
+<script src="https://d3js.org/d3.v4.js"></script>
+
+<!-- Createing a div where the graph will take place -->
+<div id="my_dataviz"></div>
+
+<body>
+    <style>
+        .pulse {
+            border: 1px solid blue;
+            fill: lightblue;
+            stroke: purple;
+            -webkit-transform: scale(1);
+            -webkit-transform-origin: 50% 50%;
+            transform: scale(1);
+            transform-origin: 50% 50%;
+        }
+        
+        .pulse:hover {
+            -webkit-animation-name: pulsar;
+            -webkit-animation-duration: 0.2s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-direction: alternate;
+            animation-name: pulsar;
+            animation-duration: 0.2s;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+            -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+        }
+        
+        @keyframes pulsar {
+            from {
+                fill: red;
+            }
+            to {
+                fill: red;
+                transform: scale(1.3, 1.3);
+                transform-origin: 50% 50%;
+            }
+        }
+    </style>
+
+    <svg class='pulse' width='30' height='30'></svg>
+</body>
+<script>
+    // setting the dimensions and margins of the graph
+    var margin = {
+            top: 12,
+            right: 32,
+            bottom: 32,
+            left: 62
+        },
+        width = 460 - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+    // appending the svg object to the body of the page
+    var svg = d3.select("#my_dataviz")
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + margin.left + "," + margin.top + ")");
+
+    //Reading the data
+    d3.csv("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/3_TwoNumOrdered_comma.csv",
+
+        // While reading the csv, variables must be formatted:
+        function(d) {
+            return {
+                date: d3.timeParse("%Y-%m-%d")(d.date),
+                value: d.value
+            }
+        },
+
+        // Now this dataset is ready to be linked:
+        function(data) {
+
+            // Adding X axis --> it is a date format
+            var x = d3.scaleTime()
+                .domain(d3.extent(data, function(d) {
+                    return d.date;
+                }))
+                .range([0, width]);
+            svg.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(d3.axisBottom(x));
+
+            // Max value observed:
+            const max = d3.max(data, function(d) {
+                return +d.value;
+            })
+
+            // Adding Y axis
+            var y = d3.scaleLinear()
+                .domain([0, max])
+                .range([height, 0]);
+            svg.append("g")
+                .call(d3.axisLeft(y));
+
+            // Setting the gradient
+            svg.append("linearGradient")
+                .attr("id", "line-gradient")
+                .attr("gradientUnits", "userSpaceOnUse")
+                .attr("x1", 0)
+                .attr("y1", y(0))
+                .attr("x2", 0)
+                .attr("y2", y(max))
+                .attr("class", "pulse")
+                .selectAll("stop")
+
+            .data([{
+                    offset: "10%",
+                    color: "purple"
+                }, {
+                    offset: "90%",
+                    color: "lightblue"
+                }])
+                .enter().append("stop")
+                .attr("offset", function(d) {
+                    return d.offset;
+                })
+                .attr("stop-color", function(d) {
+                    return d.color;
+                });
+
+            // Adding the line
+            svg.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", "url(#line-gradient)")
+                .attr("stroke-width", 3)
+                .attr("d", d3.line()
+                    .x(function(d) {
+                        return x(d.date)
+                    })
+                    .y(function(d) {
+                        return y(d.value)
+                    })
+                )
+
+        })
+</script>
+</body>
+
+</html>

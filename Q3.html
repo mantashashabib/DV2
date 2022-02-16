@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script type='text/javascript' src='https://d3js.org/d3.v7.min.js'></script>
+</head>
+
+<body>
+
+    <script>
+        d3.select('body')
+            .append('div')
+            .style('width', '100px')
+            .style('height', '20px')
+            .style('background-color', 'green')
+            .style('border-style', 'dotted')
+            .text('DV')
+            .style('text-align', 'center');
+        d3.selectAll("div")
+            .on("mouseover", function(event) {
+                d3.select(this)
+                    .style("background-color", "orange")
+                    .style("height", '40px')
+                    .style("width", '120px')
+                    .style('border-style', 'solid')
+                    .text('ASSIGNMENT 2')
+                    .style('text-align', 'center');
+                // Get current event info
+                // Note: d3.event (event) passed as the first argument to all listeners
+                console.log(event);
+                // Get x & y co-ordinates
+                // Note: d3.mouse was removed in d3v6, you should use d3.pointer(event)
+                console.log(d3.pointer(event));
+            })
+            .on("mouseout", function() {
+                d3.select(this)
+                    .style("background-color", "steelblue")
+                    .style("height", '60px')
+                    .style("width", '140px')
+                    .style('border-style', 'double')
+                    .text('Q3')
+                    .style('text-align', 'center');
+            });
+    </script>
+</body>
+
+</html>

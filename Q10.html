@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script type='text/javascript' src='https://d3js.org/d3.v7.min.js'></script>
+</head>
+
+<body>
+
+    <script>
+        var svg = d3.select('body')
+            .append('svg')
+            .attr('width', '200px')
+            .attr('height', '250px')
+            .style('border', '3px');
+
+
+        svg.append("circle")
+            .attr('cx', '50px')
+            .attr('cy', '90px')
+            .attr('r', '30px')
+            .attr('fill', 'green')
+
+
+        //d3.selectAll('body')
+
+        .on("mouseover", function(event) {
+                d3.select(this)
+                    .attr('cx', '50px')
+                    .attr('cy', '90px')
+                    .attr('r', '50px')
+                    .attr('fill', 'green')
+                    .style('transform', 'scale(1.0)')
+                    .transition()
+                    .ease(d3.easeBounce)
+                    .duration(1000)
+                    .style('transform', 'scale(0.5)')
+                    // Get current event info
+                    // Note: d3.event (event) passed as the first argument to all listeners
+                console.log(event);
+                // Get x & y co-ordinates
+                // Note: d3.mouse was removed in d3v6, you should use d3.pointer(event)
+                console.log(d3.pointer(event));
+            })
+            .on("mouseout", function() {
+                d3.select(this)
+                    .attr('cx', '50px')
+                    .attr('cy', '90px')
+                    .attr('r', '30px')
+                    .attr('fill', 'green')
+                    .style('transform', 'scale(1.0)')
+                    .transition()
+                    .ease(d3.easeBounce)
+                    .duration(1000)
+                    .style('transform', 'scale(0.5)');
+            });
+    </script>
+</body>
+
+</html>
